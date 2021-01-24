@@ -3,9 +3,17 @@ package org.zerock.board.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 import org.zerock.board.entity.Board;
 import org.zerock.board.entity.Member;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -31,4 +39,48 @@ public class BoardRepositoryTests {
         });
     }
 
+    @Transactional
+    @Test
+    public void testRead1(){
+        Optional<Board> result = boardRepository.findById(100L);
+
+        Board board = result.get();
+
+        System.out.println(board);
+        System.out.println(board.getWriter());
+    }
+
+    @Test
+    public void testReadWithWriter(){
+        Object result = boardRepository.getBoardWithWriter(100L);
+
+        Object[] arr = (Object[]) result;
+        System.out.println("-------------------------------------------");
+        System.out.println(Arrays.toString(arr));
+    }
+
+    @Test
+    public void testGetBoardWithReply(){
+        List<Object[]> result = boardRepository.getBoardWithReply(57L);
+        System.out.println("==============================================");
+        result.forEach( obj -> {
+            System.out.println(Arrays.toString(obj));
+        });
+        System.out.println("==============================================");
+    }
+
+    @Test
+    public void testWithReplyCount(){
+        Pageable pageable = PageRequest.of(0,10, Sort.by("bno").descending());
+        Page<Object[]> result = boardRepository.getBoardWithReplyCount(pageable);
+        result.get().forEach(objects -> {
+            System.out.println(Arrays.toString(objects));
+        });
+    }
+
+    @Test
+    public void testRead3(){
+        Object result = boardRepository.getBoardByBno(57L);
+        System.out.println(Arrays.toString((Object[]) result));
+    }
 }
