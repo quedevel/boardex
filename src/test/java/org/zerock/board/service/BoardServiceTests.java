@@ -8,6 +8,8 @@ import org.zerock.board.dto.PageRequestDTO;
 import org.zerock.board.dto.PageResultDTO;
 import org.zerock.board.entity.Board;
 
+import javax.transaction.Transactional;
+
 @SpringBootTest
 public class BoardServiceTests {
 
@@ -22,6 +24,7 @@ public class BoardServiceTests {
                 .writerEmail("user55@aaa.com")
                 .build();
         Long bno = boardService.register(dto);
+        System.out.println("bno............."+bno);
     }
 
     @Test
@@ -44,5 +47,15 @@ public class BoardServiceTests {
     public void testRemove(){
         Long bno = 57L;
         boardService.removeWithReplies(bno);
+    }
+
+    @Test
+    public void testModify(){
+        BoardDTO boardDTO = BoardDTO.builder()
+                .bno(2L)
+                .title("제목 변경하자")
+                .content("내용 변경하자")
+                .build();
+        boardService.modify(boardDTO);
     }
 }

@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.zerock.board.dto.BoardDTO;
 import org.zerock.board.dto.PageRequestDTO;
 import org.zerock.board.dto.PageResultDTO;
@@ -14,6 +15,7 @@ import org.zerock.board.repository.BoardRepository;
 import org.zerock.board.repository.ReplyRepository;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Log4j2
@@ -53,5 +55,15 @@ public class BoardServiceImpl implements BoardService{
     public void removeWithReplies(Long bno) {
         replyRepository.deleteByBno(bno);
         boardRepository.deleteById(bno);
+    }
+
+    @Override
+    public void modify(BoardDTO boardDTO) {
+        Optional<Board> result = boardRepository.findById(boardDTO.getBno());
+        if(result.isPresent()){
+            result.get().changeTitle(boardDTO.getTitle());
+            result.get().changeContent(boardDTO.getContent());
+            boardRepository.save(result.get());
+        }
     }
 }
